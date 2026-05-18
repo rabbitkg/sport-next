@@ -45,7 +45,6 @@ const WhyChooseUs = () => {
 
             <div className="max-w-7xl mx-auto px-5">
 
-                {/* Main Box */}
                 <div
                     className="relative rounded-[40px] overflow-hidden"
                     style={{
@@ -54,7 +53,6 @@ const WhyChooseUs = () => {
                     }}
                 >
 
-                    {/* Background Image */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
                         style={{
