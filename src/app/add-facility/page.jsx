@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const sports = [
     "Football",
@@ -19,6 +21,7 @@ const inputClass =
 const AddFacilityPage = () => {
     const [slots, setSlots] = useState([]);
     const [slotInput, setSlotInput] = useState("");
+    const router = useRouter();
 
     const handleAddSlot = () => {
         if (!slotInput) return;
@@ -26,15 +29,35 @@ const AddFacilityPage = () => {
         setSlotInput("");
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const facility = Object.fromEntries(formData.entries());
-
-        // Attach slots from state since they're not a regular input field
         facility.slots = slots;
 
-        console.log(facility);
+        try {
+            const res = await fetch("http://localhost:5000/facility", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify(facility),
+            });
+
+            const data = await res.json();
+
+            if (data.insertedId) {
+                toast.success("Facility added successfully!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    theme: "dark",
+                });
+                setTimeout(() => router.push("/facility"), 2000);
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error("Caught error:", err);
+            toast.error("Server error. Please try again.");
+        }
     };
 
     return (

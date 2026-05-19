@@ -26,7 +26,7 @@ const Navbar = () => {
 
             <li>
                 <Link
-                    href="/facilities"
+                    href="/facility"
                     className="relative group"
                 >
                     All Facilities
