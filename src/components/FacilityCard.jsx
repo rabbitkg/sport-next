@@ -15,6 +15,7 @@ import {
     FiChevronRight,
 } from "react-icons/fi";
 import Image from "next/image";
+import Link from "next/link";
 
 const ALL_SPORTS = ["All Sports", "Football", "Cricket", "Badminton", "Basketball", "Swimming", "Tennis"];
 
@@ -31,7 +32,7 @@ const CARDS_PER_PAGE = 9;
 
 // ── FacilityCard ───────────────────────────────────────────────────────────────
 const FacilityCard = ({ facility, index }) => {
-    const { name, sportType, imageUrl, location, pricePerHour, capacity, description, slots } = facility;
+    const { name, sportType, imageUrl, location, pricePerHour, capacity, description, slots, _id } = facility;
     const badgeClass = sportColors[sportType] ?? "bg-lime-500 text-black";
 
     return (
@@ -109,9 +110,12 @@ const FacilityCard = ({ facility, index }) => {
                 )}
 
                 {/* button */}
+                <Link
+                href={`/facility/${_id}`}
+                >
                 <button className="mt-auto w-full h-12 rounded-2xl bg-lime-500 hover:bg-lime-400 active:scale-95 transition-all duration-300 text-black font-bold flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(132,204,22,0.2)] cursor-pointer">
                     Book Now <FiArrowRight className="text-lg" />
-                </button>
+                </button></Link>
             </div>
 
             {/* hover glow */}
