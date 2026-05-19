@@ -58,7 +58,7 @@ const plans = [
 
 const MembershipSection = () => {
     return (
-        <section className="bg-[#F5F7F2] py-24 overflow-hidden">
+        <section className="bg-[#d9d6cb6b] py-24 overflow-hidden">
 
             <div className="max-w-7xl mx-auto px-5">
 
