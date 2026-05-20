@@ -16,6 +16,8 @@ import {
     FiX,
     FiSave,
     FiAlertTriangle,
+    FiClock,
+    FiPlusCircle,
 } from "react-icons/fi";
 
 const sportColors = {
@@ -29,6 +31,7 @@ const sportColors = {
 };
 
 const SPORT_TYPES = ["Tennis", "Swimming", "Badminton", "Football", "Cricket", "Basketball", "Gym"];
+
 
 // ── Delete Confirmation Modal ─────────────────────────────────────────────────
 const DeleteModal = ({ facility, onConfirm, onCancel, isLoading }) => (
@@ -99,19 +102,17 @@ const DeleteModal = ({ facility, onConfirm, onCancel, isLoading }) => (
 
 // ── Edit Modal ────────────────────────────────────────────────────────────────
 const EditModal = ({ facility, onSave, onCancel, isLoading }) => {
-    const [form, setForm] = useState(
-        facility
-            ? {
-                  name: facility.name ?? "",
-                  sportType: facility.sportType ?? "",
-                  location: facility.location ?? "",
-                  pricePerHour: facility.pricePerHour ?? "",
-                  capacity: facility.capacity ?? "",
-                  imageUrl: facility.imageUrl ?? "",
-                  description: facility.description ?? "",
-              }
-            : {}
-    );
+    const [form, setForm] = useState({
+        name: facility?.name ?? "",
+        sportType: facility?.sportType ?? "",
+        location: facility?.location ?? "",
+        pricePerHour: facility?.pricePerHour ?? "",
+        capacity: facility?.capacity ?? "",
+        imageUrl: facility?.imageUrl ?? "",
+        description: facility?.description ?? "",
+        availableSlots: facility?.slots ?? facility?.availableSlots ?? [],
+    });
+    const [newSlot, setNewSlot] = useState("");
 
     if (!facility) return null;
 
@@ -119,9 +120,32 @@ const EditModal = ({ facility, onSave, onCancel, isLoading }) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
+    const handleAddSlot = () => {
+        const trimmed = newSlot.trim();
+        if (!trimmed) return;
+        if (form.availableSlots.includes(trimmed)) return;
+        setForm((prev) => ({ ...prev, availableSlots: [...prev.availableSlots, trimmed] }));
+        setNewSlot("");
+    };
+
+    const handleRemoveSlot = (slot) => {
+        setForm((prev) => ({
+            ...prev,
+            availableSlots: prev.availableSlots.filter((s) => s !== slot),
+        }));
+    };
+
+    const handleSlotKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleAddSlot();
+        }
+    };
+
     const handleSubmit = () => {
         onSave({
             ...form,
+            slots: form.availableSlots,      // backend uses "slots"
             pricePerHour: Number(form.pricePerHour),
             capacity: Number(form.capacity),
         });
@@ -238,6 +262,72 @@ const EditModal = ({ facility, onSave, onCancel, isLoading }) => {
                                     />
                                 </div>
 
+                                {/* ── Available Slots ── */}
+                                <div className="col-span-2">
+                                    <label className={labelClass}>
+                                        <span className="flex items-center gap-1.5">
+                                            <FiClock className="text-lime-400" /> Available Slots
+                                        </span>
+                                    </label>
+
+                                    {/* Add slot input row */}
+                                    <div className="flex gap-2 mb-3">
+                                        <input
+                                            value={newSlot}
+                                            onChange={(e) => setNewSlot(e.target.value)}
+                                            onKeyDown={handleSlotKeyDown}
+                                            placeholder="e.g. 09:00 AM – 10:00 AM"
+                                            className={inputClass}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleAddSlot}
+                                            disabled={!newSlot.trim()}
+                                            className="shrink-0 h-[42px] px-4 rounded-xl bg-lime-500/10 border border-lime-500/30 text-lime-400 hover:bg-lime-500/20 hover:border-lime-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-1.5 text-sm font-bold cursor-pointer"
+                                        >
+                                            <FiPlusCircle /> Add
+                                        </button>
+                                    </div>
+
+                                    {/* Slot tags — shown below the input, click × to remove */}
+                                    <AnimatePresence>
+                                        {form.availableSlots.length > 0 ? (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: -4 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="flex flex-wrap gap-2"
+                                            >
+                                                {form.availableSlots.map((slot) => (
+                                                    <motion.span
+                                                        key={slot}
+                                                        initial={{ opacity: 0, scale: 0.85 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0.75 }}
+                                                        transition={{ duration: 0.15 }}
+                                                        className="flex items-center gap-1.5 pl-3 pr-2 py-1.5 rounded-lg bg-lime-500/10 border border-lime-500/25 text-lime-300 text-xs font-semibold"
+                                                    >
+                                                        <FiClock className="shrink-0 text-lime-400 text-[11px]" />
+                                                        {slot}
+                                                        {/* ✕ remove button */}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveSlot(slot)}
+                                                            title="Remove slot"
+                                                            className="ml-0.5 w-4 h-4 rounded-full flex items-center justify-center bg-lime-500/20 hover:bg-red-500/30 text-lime-400 hover:text-red-400 transition-all duration-150 cursor-pointer"
+                                                        >
+                                                            <FiX className="text-[10px]" />
+                                                        </button>
+                                                    </motion.span>
+                                                ))}
+                                            </motion.div>
+                                        ) : (
+                                            <p className="text-xs text-gray-600 italic">
+                                                No slots added yet. Type a time range and press Add or Enter.
+                                            </p>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
                                 <div className="col-span-2">
                                     <label className={labelClass}>Description</label>
                                     <textarea
@@ -293,13 +383,11 @@ const FacilityRow = ({ facility, index, onEditClick, onDeleteClick }) => {
             transition={{ duration: 0.35, delay: index * 0.06 }}
             className="group relative overflow-hidden rounded-[22px] border border-white/10 bg-white/5 backdrop-blur-xl hover:border-white/20 transition-all duration-300"
         >
-            {/* hover glow */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                 <div className="absolute -top-8 -right-8 w-32 h-32 bg-lime-500/8 blur-3xl rounded-full" />
             </div>
 
             <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 p-4">
-                {/* image */}
                 <div className="relative w-full sm:w-24 h-24 shrink-0 rounded-2xl overflow-hidden">
                     <Image
                         src={imageUrl}
@@ -309,7 +397,6 @@ const FacilityRow = ({ facility, index, onEditClick, onDeleteClick }) => {
                     />
                 </div>
 
-                {/* info */}
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <h3 className="text-white font-black text-lg leading-tight">{name}</h3>
@@ -334,7 +421,6 @@ const FacilityRow = ({ facility, index, onEditClick, onDeleteClick }) => {
                     </div>
                 </div>
 
-                {/* actions */}
                 <div className="flex sm:flex-col gap-2 sm:items-end shrink-0">
                     <button
                         onClick={() => onEditClick(facility)}
@@ -364,7 +450,6 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
     const [isDeleteLoading, setIsDeleteLoading] = useState(false);
     const router = useRouter();
 
-    // ── Edit ──
     const handleEditClick = (facility) => setEditTarget(facility);
 
     const handleEditSave = async (updatedData) => {
@@ -377,7 +462,9 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
             });
             setFacilities((prev) =>
                 prev.map((f) =>
-                    f._id === editTarget._id ? { ...f, ...updatedData } : f
+                    f._id === editTarget._id
+                        ? { ...f, ...updatedData, slots: updatedData.slots ?? f.slots }
+                        : f
                 )
             );
             setEditTarget(null);
@@ -389,7 +476,6 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
         }
     };
 
-    // ── Delete ──
     const handleDeleteClick = (facility) => setDeleteTarget(facility);
 
     const handleDeleteConfirm = async () => {
@@ -409,15 +495,13 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
     };
 
     return (
-        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-32 pb-16">
+        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-35 pb-16">
             <div className="max-w-5xl mx-auto">
-
-                {/* heading row */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex items-start justify-between gap-4 mb-10"
+                    className="flex items-start justify-between gap-4 mb-6"
                 >
                     <div>
                         <h1 className="text-4xl md:text-5xl font-black text-white">
@@ -436,7 +520,6 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
                     </Link>
                 </motion.div>
 
-                {/* list */}
                 <AnimatePresence mode="popLayout">
                     {facilities.length > 0 ? (
                         <div className="space-y-4">
@@ -473,15 +556,14 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
                 </AnimatePresence>
             </div>
 
-            {/* ── Edit Modal ── */}
             <EditModal
+                key={editTarget?._id}
                 facility={editTarget}
                 onSave={handleEditSave}
                 onCancel={() => setEditTarget(null)}
                 isLoading={isEditLoading}
             />
 
-            {/* ── Delete Modal ── */}
             <DeleteModal
                 facility={deleteTarget}
                 onConfirm={handleDeleteConfirm}

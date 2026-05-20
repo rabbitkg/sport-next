@@ -221,7 +221,7 @@ const AllFacilitiesPage = ({ facilities = [] }) => {
     };
 
     return (
-        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-32 pb-16">
+        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-34 pb-16">
             <div className="max-w-6xl mx-auto">
 
                 {/* heading */}
