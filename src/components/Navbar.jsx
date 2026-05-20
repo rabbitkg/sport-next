@@ -129,6 +129,20 @@ const Navbar = () => {
                             </Link>
                         )}
                     </div>
+                    {/* Sign up Button */}
+                    <div className="hidden lg:flex">
+                        {!user && (
+                            <Link href="/signup">
+                                <button className="cursor-pointer relative overflow-hidden bg-lime-400 text-black font-bold px-7 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(163,230,53,0.7)]">
+
+                                    <span className="relative z-10">
+                                        Sign Up
+                                    </span>
+
+                                </button>
+                            </Link>
+                        )}
+                    </div>
 
                     {/* Mobile Button */}
                     <button
