@@ -13,67 +13,276 @@ import {
     FiTrash2,
     FiPlus,
     FiCalendar,
+    FiX,
+    FiSave,
     FiAlertTriangle,
 } from "react-icons/fi";
 
 const sportColors = {
-    Tennis:     "bg-yellow-400 text-black",
-    Swimming:   "bg-cyan-400 text-black",
-    Badminton:  "bg-purple-400 text-black",
-    Football:   "bg-lime-500 text-black",
-    Cricket:    "bg-orange-400 text-black",
+    Tennis: "bg-yellow-400 text-black",
+    Swimming: "bg-cyan-400 text-black",
+    Badminton: "bg-purple-400 text-black",
+    Football: "bg-lime-500 text-black",
+    Cricket: "bg-orange-400 text-black",
     Basketball: "bg-red-400 text-black",
-    Gym:        "bg-lime-500 text-black",
+    Gym: "bg-lime-500 text-black",
 };
 
-// ── Delete Confirm Modal ───────────────────────────────────────────────────────
-const DeleteModal = ({ facility, onCancel, onConfirm, loading }) => (
-    <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm"
-    >
-        <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="relative w-full max-w-md rounded-[28px] border border-white/10 bg-[#0B1622] shadow-[0_0_60px_rgba(0,0,0,0.6)] p-8"
-        >
-            <div className="flex flex-col items-center text-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                    <FiAlertTriangle className="text-red-400 text-2xl" />
-                </div>
-                <div>
-                    <h3 className="text-xl font-black text-white mb-1">Delete Facility?</h3>
-                    <p className="text-gray-400 text-sm">
-                        Are you sure you want to delete <span className="text-white font-semibold">{facility?.name}</span>? This action cannot be undone.
-                    </p>
-                </div>
-                <div className="flex gap-3 w-full mt-2">
-                    <button
-                        onClick={onCancel}
-                        className="flex-1 h-12 rounded-2xl bg-white/5 border border-white/10 text-white font-bold hover:border-white/30 transition-all duration-300 cursor-pointer"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={onConfirm}
-                        disabled={loading}
-                        className="flex-1 h-12 rounded-2xl bg-red-500 hover:bg-red-400 text-white font-bold transition-all duration-300 cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
-                    >
-                        {loading ? "Deleting..." : <><FiTrash2 /> Delete</>}
-                    </button>
-                </div>
-            </div>
-        </motion.div>
-    </motion.div>
+const SPORT_TYPES = ["Tennis", "Swimming", "Badminton", "Football", "Cricket", "Basketball", "Gym"];
+
+// ── Delete Confirmation Modal ─────────────────────────────────────────────────
+const DeleteModal = ({ facility, onConfirm, onCancel, isLoading }) => (
+    <AnimatePresence>
+        {facility && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+                onClick={onCancel}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                    transition={{ duration: 0.25 }}
+                    className="w-full max-w-md bg-[#0e1c29] border border-white/10 rounded-[24px] p-6 shadow-2xl"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="w-11 h-11 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                            <FiAlertTriangle className="text-red-400 text-xl" />
+                        </div>
+                        <div>
+                            <h2 className="text-white font-black text-lg">Delete Facility?</h2>
+                            <p className="text-gray-400 text-sm">This action cannot be undone.</p>
+                        </div>
+                    </div>
+
+                    <div className="rounded-xl bg-white/5 border border-white/10 p-3 mb-6 flex items-center gap-3">
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0">
+                            <Image src={facility.imageUrl} alt={facility.name} fill className="object-cover" />
+                        </div>
+                        <div>
+                            <p className="text-white font-bold text-sm">{facility.name}</p>
+                            <p className="text-gray-400 text-xs flex items-center gap-1 mt-0.5">
+                                <FiMapPin className="text-lime-400" /> {facility.location}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                        <button
+                            onClick={onCancel}
+                            disabled={isLoading}
+                            className="flex-1 h-11 rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:text-white hover:border-white/20 font-bold text-sm transition-all duration-200 cursor-pointer"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={onConfirm}
+                            disabled={isLoading}
+                            className="flex-1 h-11 rounded-xl bg-red-500 hover:bg-red-400 disabled:opacity-60 text-white font-black text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                        >
+                            {isLoading ? (
+                                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                <><FiTrash2 /> Delete</>
+                            )}
+                        </button>
+                    </div>
+                </motion.div>
+            </motion.div>
+        )}
+    </AnimatePresence>
 );
 
+// ── Edit Modal ────────────────────────────────────────────────────────────────
+const EditModal = ({ facility, onSave, onCancel, isLoading }) => {
+    const [form, setForm] = useState(
+        facility
+            ? {
+                  name: facility.name ?? "",
+                  sportType: facility.sportType ?? "",
+                  location: facility.location ?? "",
+                  pricePerHour: facility.pricePerHour ?? "",
+                  capacity: facility.capacity ?? "",
+                  imageUrl: facility.imageUrl ?? "",
+                  description: facility.description ?? "",
+              }
+            : {}
+    );
+
+    if (!facility) return null;
+
+    const handleChange = (e) => {
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleSubmit = () => {
+        onSave({
+            ...form,
+            pricePerHour: Number(form.pricePerHour),
+            capacity: Number(form.capacity),
+        });
+    };
+
+    const inputClass =
+        "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-lime-500/50 focus:bg-white/8 transition-all duration-200";
+    const labelClass = "block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5";
+
+    return (
+        <AnimatePresence>
+            {facility && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto"
+                    onClick={onCancel}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                        transition={{ duration: 0.25 }}
+                        className="w-full max-w-lg bg-[#0e1c29] border border-white/10 rounded-[24px] p-6 shadow-2xl my-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-white font-black text-xl">Edit Facility</h2>
+                                <p className="text-gray-400 text-sm mt-0.5">Update facility details</p>
+                            </div>
+                            <button
+                                onClick={onCancel}
+                                className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-white/20 flex items-center justify-center transition-all duration-200 cursor-pointer"
+                            >
+                                <FiX />
+                            </button>
+                        </div>
+
+                        {/* Form */}
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="col-span-2">
+                                    <label className={labelClass}>Facility Name</label>
+                                    <input
+                                        name="name"
+                                        value={form.name}
+                                        onChange={handleChange}
+                                        placeholder="e.g. Green Court Tennis"
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={labelClass}>Sport Type</label>
+                                    <select
+                                        name="sportType"
+                                        value={form.sportType}
+                                        onChange={handleChange}
+                                        className={inputClass + " cursor-pointer"}
+                                    >
+                                        <option value="" disabled className="bg-[#0e1c29]">Select sport</option>
+                                        {SPORT_TYPES.map((s) => (
+                                            <option key={s} value={s} className="bg-[#0e1c29]">{s}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className={labelClass}>Location</label>
+                                    <input
+                                        name="location"
+                                        value={form.location}
+                                        onChange={handleChange}
+                                        placeholder="City, Area"
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={labelClass}>Price / Hour ($)</label>
+                                    <input
+                                        name="pricePerHour"
+                                        type="number"
+                                        value={form.pricePerHour}
+                                        onChange={handleChange}
+                                        placeholder="25"
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={labelClass}>Capacity (players)</label>
+                                    <input
+                                        name="capacity"
+                                        type="number"
+                                        value={form.capacity}
+                                        onChange={handleChange}
+                                        placeholder="10"
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                <div className="col-span-2">
+                                    <label className={labelClass}>Image URL</label>
+                                    <input
+                                        name="imageUrl"
+                                        value={form.imageUrl}
+                                        onChange={handleChange}
+                                        placeholder="https://..."
+                                        className={inputClass}
+                                    />
+                                </div>
+
+                                <div className="col-span-2">
+                                    <label className={labelClass}>Description</label>
+                                    <textarea
+                                        name="description"
+                                        value={form.description}
+                                        onChange={handleChange}
+                                        rows={3}
+                                        placeholder="Short description of the facility..."
+                                        className={inputClass + " resize-none"}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={onCancel}
+                                disabled={isLoading}
+                                className="flex-1 h-11 rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:text-white hover:border-white/20 font-bold text-sm transition-all duration-200 cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={isLoading}
+                                className="flex-1 h-11 rounded-xl bg-lime-500 hover:bg-lime-400 disabled:opacity-60 text-black font-black text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(132,204,22,0.2)]"
+                            >
+                                {isLoading ? (
+                                    <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                ) : (
+                                    <><FiSave /> Save Changes</>
+                                )}
+                            </button>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+};
+
 // ── Facility Row Card ──────────────────────────────────────────────────────────
-const FacilityRow = ({ facility, index, onDeleteClick }) => {
-    const { _id, name, sportType, imageUrl, location, pricePerHour, capacity, bookingCount = 0 } = facility;
+const FacilityRow = ({ facility, index, onEditClick, onDeleteClick }) => {
+    const { name, sportType, imageUrl, location, pricePerHour, capacity, bookingCount = 0 } = facility;
     const badgeClass = sportColors[sportType] ?? "bg-lime-500 text-black";
 
     return (
@@ -127,12 +336,13 @@ const FacilityRow = ({ facility, index, onDeleteClick }) => {
 
                 {/* actions */}
                 <div className="flex sm:flex-col gap-2 sm:items-end shrink-0">
-                    <Link
-                        href={`/facility/edit/${_id}`}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-lime-400 hover:border-lime-500/40 transition-all duration-300 text-sm font-semibold"
+                    <button
+                        onClick={() => onEditClick(facility)}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-lime-400 hover:border-lime-500/40 transition-all duration-300 text-sm font-semibold cursor-pointer"
                     >
                         <FiEdit2 className="text-sm" /> Edit
-                    </Link>
+                    </button>
+
                     <button
                         onClick={() => onDeleteClick(facility)}
                         className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-500/5 border border-red-500/20 text-red-400 hover:bg-red-500/15 hover:border-red-500/40 transition-all duration-300 text-sm font-semibold cursor-pointer"
@@ -148,16 +358,42 @@ const FacilityRow = ({ facility, index, onDeleteClick }) => {
 // ── Main Component ─────────────────────────────────────────────────────────────
 const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
     const [facilities, setFacilities] = useState(initialFacilities);
+    const [editTarget, setEditTarget] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [isEditLoading, setIsEditLoading] = useState(false);
+    const [isDeleteLoading, setIsDeleteLoading] = useState(false);
     const router = useRouter();
 
+    // ── Edit ──
+    const handleEditClick = (facility) => setEditTarget(facility);
+
+    const handleEditSave = async (updatedData) => {
+        setIsEditLoading(true);
+        try {
+            await fetch(`http://localhost:5000/facility/${editTarget._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedData),
+            });
+            setFacilities((prev) =>
+                prev.map((f) =>
+                    f._id === editTarget._id ? { ...f, ...updatedData } : f
+                )
+            );
+            setEditTarget(null);
+            router.refresh();
+        } catch (err) {
+            console.error("Edit failed:", err);
+        } finally {
+            setIsEditLoading(false);
+        }
+    };
+
+    // ── Delete ──
     const handleDeleteClick = (facility) => setDeleteTarget(facility);
-    const handleDeleteCancel = () => setDeleteTarget(null);
 
     const handleDeleteConfirm = async () => {
-        if (!deleteTarget) return;
-        setDeleteLoading(true);
+        setIsDeleteLoading(true);
         try {
             await fetch(`http://localhost:5000/facility/${deleteTarget._id}`, {
                 method: "DELETE",
@@ -168,88 +404,91 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
         } catch (err) {
             console.error("Delete failed:", err);
         } finally {
-            setDeleteLoading(false);
+            setIsDeleteLoading(false);
         }
     };
 
     return (
-        <>
-            <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-32 pb-16">
-                <div className="max-w-5xl mx-auto">
+        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-32 pb-16">
+            <div className="max-w-5xl mx-auto">
 
-                    {/* heading row */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="flex items-start justify-between gap-4 mb-10"
+                {/* heading row */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex items-start justify-between gap-4 mb-10"
+                >
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-black text-white">
+                            Manage My Facilities
+                        </h1>
+                        <p className="text-gray-400 mt-2 text-sm">
+                            Edit or remove your listed venues
+                        </p>
+                    </div>
+
+                    <Link
+                        href="/add-facility"
+                        className="shrink-0 flex items-center gap-2 h-12 px-5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm transition-all duration-300 shadow-[0_0_25px_rgba(132,204,22,0.25)]"
                     >
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-black text-white">
-                                Manage My Facilities
-                            </h1>
-                            <p className="text-gray-400 mt-2 text-sm">
-                                Edit or remove your listed venues
-                            </p>
+                        <FiPlus className="text-lg" /> Add New
+                    </Link>
+                </motion.div>
+
+                {/* list */}
+                <AnimatePresence mode="popLayout">
+                    {facilities.length > 0 ? (
+                        <div className="space-y-4">
+                            {facilities.map((facility, i) => (
+                                <FacilityRow
+                                    key={facility._id}
+                                    facility={facility}
+                                    index={i}
+                                    onEditClick={handleEditClick}
+                                    onDeleteClick={handleDeleteClick}
+                                />
+                            ))}
                         </div>
-
-                        <Link
-                            href="/add-facility"
-                            className="shrink-0 flex items-center gap-2 h-12 px-5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm transition-all duration-300 shadow-[0_0_25px_rgba(132,204,22,0.25)]"
+                    ) : (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col items-center justify-center py-28 text-center"
                         >
-                            <FiPlus className="text-lg" /> Add New
-                        </Link>
-                    </motion.div>
-
-                    {/* list */}
-                    <AnimatePresence mode="popLayout">
-                        {facilities.length > 0 ? (
-                            <div className="space-y-4">
-                                {facilities.map((facility, i) => (
-                                    <FacilityRow
-                                        key={facility._id}
-                                        facility={facility}
-                                        index={i}
-                                        onDeleteClick={handleDeleteClick}
-                                    />
-                                ))}
+                            <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-5">
+                                <FiPlus className="text-3xl text-gray-500" />
                             </div>
-                        ) : (
-                            <motion.div
-                                key="empty"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="flex flex-col items-center justify-center py-28 text-center"
+                            <h3 className="text-xl font-bold text-white mb-2">No facilities yet</h3>
+                            <p className="text-gray-500 text-sm mb-6">Add your first venue to get started.</p>
+                            <Link
+                                href="/add-facility"
+                                className="flex items-center gap-2 h-12 px-6 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm transition-all duration-300"
                             >
-                                <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-5">
-                                    <FiPlus className="text-3xl text-gray-500" />
-                                </div>
-                                <h3 className="text-xl font-bold text-white mb-2">No facilities yet</h3>
-                                <p className="text-gray-500 text-sm mb-6">Add your first venue to get started.</p>
-                                <Link
-                                    href="/add-facility"
-                                    className="flex items-center gap-2 h-12 px-6 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm transition-all duration-300"
-                                >
-                                    <FiPlus /> Add Facility
-                                </Link>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </section>
+                                <FiPlus /> Add Facility
+                            </Link>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
-            {/* delete modal */}
-            <AnimatePresence>
-                {deleteTarget && (
-                    <DeleteModal
-                        facility={deleteTarget}
-                        onCancel={handleDeleteCancel}
-                        onConfirm={handleDeleteConfirm}
-                        loading={deleteLoading}
-                    />
-                )}
-            </AnimatePresence>
-        </>
+            {/* ── Edit Modal ── */}
+            <EditModal
+                facility={editTarget}
+                onSave={handleEditSave}
+                onCancel={() => setEditTarget(null)}
+                isLoading={isEditLoading}
+            />
+
+            {/* ── Delete Modal ── */}
+            <DeleteModal
+                facility={deleteTarget}
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeleteTarget(null)}
+                isLoading={isDeleteLoading}
+            />
+        </section>
     );
 };
 
