@@ -12,8 +12,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "**"
       },
-
-    ]
+{ protocol: "https", hostname: "plus.unsplash.com" },
+      { protocol: "https", hostname: "i.ibb.co" },
+      { protocol: "https", hostname: "i.ibb.co.com" },
+      { protocol: "https", hostname: "**.ibb.co" },
+    ],
+    minimumCacheTTL: 60,
   }
 };
 
