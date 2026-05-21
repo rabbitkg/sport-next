@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 
-// ── Google Icon ─────────────────────────────────────────────────────────────
 const GoogleIcon = () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4" />
@@ -18,7 +17,6 @@ const GoogleIcon = () => (
     </svg>
 );
 
-// ── Field component ─────────────────────────────────────────────────────────
 const Field = ({ label, icon: Icon, delay, children }) => (
     <motion.div
         initial={{ opacity: 0, y: 18 }}
@@ -39,89 +37,65 @@ const Field = ({ label, icon: Icon, delay, children }) => (
 );
 
 const inputBase =
-    "w-full h-14 pl-10 pr-4 rounded-2xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-lime-500/60 focus:bg-white/8 transition-all duration-300";
+    "w-full h-14 pl-10 pr-4 rounded-2xl bg-white/5 border border-white/10 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-lime-500/60 transition-all duration-300";
 
-// ── Main Page ───────────────────────────────────────────────────────────────
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-   
-
     const onSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+
         const formData = new FormData(e.currentTarget);
-        const user = Object.fromEntries(formData.entries());
+        const values = Object.fromEntries(formData.entries());
 
         const { data, error } = await authClient.signIn.email({
-            email: user.email,
-            password: user.password,
-        })
+            email: values.email,
+            password: values.password,
+        });
 
-       
-        console.log({ data, error })
+        setIsLoading(false);
 
         if (data) {
-            redirect('/')
+            toast.success("Welcome back!", {
+                theme: "dark",
+                position: "top-right",
+                autoClose: 1500,
+            });
+            setTimeout(() => router.push("/"), 1500);
         }
 
         if (error) {
-            alert("Error")
+            toast.error(error.message || "Invalid email or password.", {
+                theme: "dark",
+                position: "top-right",
+            });
         }
-
-        // setIsLoading(true);
-        // try {
-        //     const res = await fetch("http://localhost:5000/user/login", {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify(data),
-        //     });
-        //     const result = await res.json();
-
-        //     if (result.success || result.token) {
-        //         toast.success("Welcome back!", {
-        //             position: "top-right",
-        //             autoClose: 2000,
-        //             theme: "dark",
-        //         });
-        //         setTimeout(() => router.push("/"), 2000);
-        //     } else {
-        //         toast.error(result.message || "Invalid credentials. Please try again.", {
-        //             theme: "dark",
-        //         });
-        //     }
-        // } catch (err) {
-        //     console.error(err);
-        //     toast.error("Server error. Please try again.", { theme: "dark" });
-        // } finally {
-        //     setIsLoading(false);
-        // }
     };
 
     const handleGoogleSignin = async () => {
-                await authClient.signIn.social({
-                    provider: "google",
-                });
-            }
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/",
+        });
+    };
 
     return (
         <section className="bg-[#071018] flex items-center justify-center px-4 pt-37 pb-10 relative overflow-hidden">
 
-            {/* ── Ambient glow blobs ── */}
+            {/* Glow blobs */}
             <div className="pointer-events-none absolute inset-0">
                 <div className="absolute -top-32 -right-32 w-[420px] h-[420px] bg-lime-500/10 blur-[120px] rounded-full" />
                 <div className="absolute bottom-0 left-0 w-[320px] h-[320px] bg-lime-500/6 blur-[100px] rounded-full" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/3 blur-[140px] rounded-full" />
             </div>
 
-            {/* ── Dot-grid texture ── */}
+            {/* Dot grid */}
             <div
                 className="pointer-events-none absolute inset-0 opacity-[0.03]"
-                style={{
-                    backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)",
-                    backgroundSize: "28px 28px",
-                }}
+                style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "28px 28px" }}
             />
 
             <motion.div
@@ -130,13 +104,10 @@ const LoginPage = () => {
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="relative w-full max-w-md"
             >
-                {/* ── Card ── */}
                 <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_0_60px_rgba(132,204,22,0.08)]">
-
-                    {/* inner glow */}
                     <div className="absolute -top-10 left-0 w-56 h-56 bg-lime-500/10 blur-3xl rounded-full pointer-events-none" />
 
-                    {/* ── Header banner ── */}
+                    {/* Header */}
                     <div className="relative px-8 pt-10 pb-8 text-center border-b border-white/8">
                         <motion.div
                             initial={{ scale: 0.6, opacity: 0 }}
@@ -168,7 +139,7 @@ const LoginPage = () => {
                         </motion.p>
                     </div>
 
-                    {/* ── Form body ── */}
+                    {/* Form */}
                     <div className="relative px-8 pt-7 pb-8">
                         <form onSubmit={onSubmit} className="space-y-4">
 
@@ -194,7 +165,7 @@ const LoginPage = () => {
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => setShowPassword((v) => !v)}
+                                    onClick={() => setShowPassword(v => !v)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-lime-400 transition-colors duration-200 cursor-pointer"
                                     tabIndex={-1}
                                 >
@@ -229,11 +200,10 @@ const LoginPage = () => {
                                     disabled={isLoading}
                                     className="w-full h-13 rounded-2xl bg-lime-500 hover:bg-lime-400 disabled:opacity-60 text-black font-black text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(132,204,22,0.25)] cursor-pointer"
                                 >
-                                    {isLoading ? (
-                                        <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                    ) : (
-                                        "Sign In"
-                                    )}
+                                    {isLoading
+                                        ? <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                        : "Sign In"
+                                    }
                                 </button>
                             </motion.div>
                         </form>
@@ -271,10 +241,7 @@ const LoginPage = () => {
                             className="text-center text-sm text-gray-500 mt-6"
                         >
                             Don&apos;t have an account?{" "}
-                            <Link
-                                href="/signup"
-                                className="text-lime-400 font-bold hover:text-lime-300 transition-colors duration-200"
-                            >
+                            <Link href="/signup" className="text-lime-400 font-bold hover:text-lime-300 transition-colors duration-200">
                                 Register free
                             </Link>
                         </motion.p>
