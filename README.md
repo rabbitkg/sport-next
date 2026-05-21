@@ -163,25 +163,27 @@ npm run dev
 
 **Client `.env.local`**
 ```env
-BETTER_AUTH_SECRET=your_secret
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-MONGODB_URI=your_mongodb_connection_string
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
+BETTER_AUTH_SECRET=secret
+BETTER_AUTH_URL= ********
+NEXT_PUBLIC_BETTER_AUTH_URL= ********
+MONGODB_URI=mongodb_connection_string
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret
 ```
 
 **Server `.env`**
 ```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
+PORT=*****
+MONGODB_URI=mongodb_connection_string
+JWT_SECRET=jwt_secret
 ```
 
 ---
 
 ## 📁 Project Structure
 
+**Client**
+```
 client/
 ├── src/
 │   ├── app/
@@ -198,10 +200,14 @@ client/
 │   │   └── ...
 │   └── lib/
 │       └── auth-client.js
+```
+
+**Server**
+```
 server/
 ├── index.js
 └── .env
----
+```
 
 ## 🛠️ Tech Stack
 
