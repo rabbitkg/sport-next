@@ -16,6 +16,7 @@ const nextConfig = {
       { protocol: "https", hostname: "i.ibb.co" },
       { protocol: "https", hostname: "i.ibb.co.com" },
       { protocol: "https", hostname: "**.ibb.co" },
+      { hostname: "flagcdn.com" },
     ],
     minimumCacheTTL: 60,
   }
