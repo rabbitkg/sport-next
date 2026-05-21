@@ -93,7 +93,7 @@ const HowItWorks = () => {
                             <div className="relative overflow-hidden rounded-[32px] group">
 
                                 <Image
-                                    src="/assets/howWork1.jpg"
+                                    src="/assets/howWork1.png"
                                     alt="Sports Player"
                                     width={700}
                                     height={700}

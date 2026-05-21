@@ -3,17 +3,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
 // ── Google Icon ─────────────────────────────────────────────────────────────
 const GoogleIcon = () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4"/>
-        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853"/>
-        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05"/>
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335"/>
+        <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4" />
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853" />
+        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05" />
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335" />
     </svg>
 );
 
@@ -46,38 +47,56 @@ const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
+   
+
     const onSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
+        const user = Object.fromEntries(formData.entries());
 
-        setIsLoading(true);
-        try {
-            const res = await fetch("http://localhost:5000/user/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            const result = await res.json();
+        const { data, error } = await authClient.signIn.email({
+            email: user.email,
+            password: user.password,
+        })
 
-            if (result.success || result.token) {
-                toast.success("Welcome back!", {
-                    position: "top-right",
-                    autoClose: 2000,
-                    theme: "dark",
-                });
-                setTimeout(() => router.push("/"), 2000);
-            } else {
-                toast.error(result.message || "Invalid credentials. Please try again.", {
-                    theme: "dark",
-                });
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error("Server error. Please try again.", { theme: "dark" });
-        } finally {
-            setIsLoading(false);
+       
+        console.log({ data, error })
+
+        if (data) {
+            redirect('/')
         }
+
+        if (error) {
+            alert("Error")
+        }
+
+        // setIsLoading(true);
+        // try {
+        //     const res = await fetch("http://localhost:5000/user/login", {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify(data),
+        //     });
+        //     const result = await res.json();
+
+        //     if (result.success || result.token) {
+        //         toast.success("Welcome back!", {
+        //             position: "top-right",
+        //             autoClose: 2000,
+        //             theme: "dark",
+        //         });
+        //         setTimeout(() => router.push("/"), 2000);
+        //     } else {
+        //         toast.error(result.message || "Invalid credentials. Please try again.", {
+        //             theme: "dark",
+        //         });
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     toast.error("Server error. Please try again.", { theme: "dark" });
+        // } finally {
+        //     setIsLoading(false);
+        // }
     };
 
     return (
@@ -120,8 +139,8 @@ const LoginPage = () => {
                             className="mx-auto mb-5 w-14 h-14 rounded-2xl bg-lime-500/15 border border-lime-500/30 flex items-center justify-center shadow-[0_0_24px_rgba(132,204,22,0.2)]"
                         >
                             <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                                <circle cx="13" cy="13" r="4" fill="#84cc16"/>
-                                <path d="M13 2v3M13 21v3M2 13h3M21 13h3M4.93 4.93l2.12 2.12M18.95 18.95l2.12 2.12M4.93 21.07l2.12-2.12M18.95 7.05l2.12-2.12" stroke="#84cc16" strokeWidth="2" strokeLinecap="round"/>
+                                <circle cx="13" cy="13" r="4" fill="#84cc16" />
+                                <path d="M13 2v3M13 21v3M2 13h3M21 13h3M4.93 4.93l2.12 2.12M18.95 18.95l2.12 2.12M4.93 21.07l2.12-2.12M18.95 7.05l2.12-2.12" stroke="#84cc16" strokeWidth="2" strokeLinecap="round" />
                             </svg>
                         </motion.div>
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import {
     FiUser,
@@ -13,6 +13,9 @@ import {
     FiEye,
     FiEyeOff,
 } from "react-icons/fi";
+import { auth0 } from "better-auth/plugins";
+import { authClient } from "@/lib/auth-client";
+import { Toast } from "@heroui/react";
 
 // ── Google Icon (inline SVG) ────────────────────────────────────────────────
 const GoogleIcon = () => (
@@ -56,36 +59,51 @@ const SignUpPage = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
+        const user = Object.fromEntries(formData.entries());
 
-        setIsLoading(true);
-        try {
-            // Replace with your actual register endpoint
-            const res = await fetch("http://localhost:5000/user/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            const result = await res.json();
-
-            if (result.insertedId || result.success) {
-                toast.success("Account created successfully!", {
-                    position: "top-right",
-                    autoClose: 2000,
-                    theme: "dark",
-                });
-                setTimeout(() => router.push("/"), 2000);
-            } else {
-                toast.error(result.message || "Something went wrong. Please try again.", {
-                    theme: "dark",
-                });
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error("Server error. Please try again.", { theme: "dark" });
-        } finally {
-            setIsLoading(false);
+        const {data, error} = await authClient.signUp.email({
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            image: user.photoURL
+        })
+        // console.log({data, error})
+        if(data){
+            redirect('/')
         }
+
+        if(error){
+            alert("Error")
+        }
+
+        // setIsLoading(true);
+        // try {
+        //     // Replace with your actual register endpoint
+        //     const res = await fetch("http://localhost:5000/user/register", {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify(data),
+        //     });
+        //     const result = await res.json();
+
+        //     if (result.insertedId || result.success) {
+        //         toast.success("Account created successfully!", {
+        //             position: "top-right",
+        //             autoClose: 2000,
+        //             theme: "dark",
+        //         });
+        //         setTimeout(() => router.push("/"), 2000);
+        //     } else {
+        //         toast.error(result.message || "Something went wrong. Please try again.", {
+        //             theme: "dark",
+        //         });
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     toast.error("Server error. Please try again.", { theme: "dark" });
+        // } finally {
+        //     setIsLoading(false);
+        // }
     };
 
     return (
