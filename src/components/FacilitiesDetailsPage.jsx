@@ -13,35 +13,78 @@ import {
     FiCalendar,
     FiCheckCircle,
 } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
 const sportColors = {
-    Tennis:     "bg-yellow-400 text-black",
-    Swimming:   "bg-cyan-400 text-black",
-    Badminton:  "bg-purple-400 text-black",
-    Football:   "bg-lime-500 text-black",
-    Cricket:    "bg-orange-400 text-black",
+    Tennis: "bg-yellow-400 text-black",
+    Swimming: "bg-cyan-400 text-black",
+    Badminton: "bg-purple-400 text-black",
+    Football: "bg-lime-500 text-black",
+    Cricket: "bg-orange-400 text-black",
     Basketball: "bg-red-400 text-black",
-    Gym:        "bg-lime-500 text-black",
+    Gym: "bg-lime-500 text-black",
 };
 
 const inputClass =
     "w-full h-12 px-4 rounded-2xl bg-[#0B1622] border border-white/10 text-white placeholder-gray-500 outline-none focus:border-lime-500 transition-all duration-300 text-sm";
 
 // ── Booking Form ───────────────────────────────────────────────────────────────
+import { toast } from "sonner";
 const BookingForm = ({ facility }) => {
-    const { name, pricePerHour, slots = [] } = facility;
+    const { data: session } = authClient.useSession();
+    const user = session?.user;
+
+    const { name, pricePerHour, slots = [], imageUrl, location } = facility;
     const [date, setDate] = useState("");
     const [timeSlot, setTimeSlot] = useState("");
     const [duration, setDuration] = useState(1);
-    const [confirmed, setConfirmed] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [confirmed, setConfirmed] = useState(false); // ✅ add this back
 
     const total = pricePerHour * duration;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log({ facilityName: name, date, timeSlot, duration, total });
-        setConfirmed(true);
-        setTimeout(() => setConfirmed(false), 3000);
+
+        const bookingData = {
+            userId: user.id,
+            userName: user.name,
+            userImage: user.image,
+            userEmail: user.email,
+            facilityName: name,
+            facilityImage: imageUrl,
+            location,
+            date,
+            timeSlot,
+            duration,
+            total,
+            status: "pending", // ✅ add status so MyBookings badge works
+        };
+
+        try {
+            setLoading(true);
+            const { data: tokenData } = await authClient.token();
+
+            const res = await fetch("http://localhost:5000/booking", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${tokenData?.token}`,
+                },
+                body: JSON.stringify(bookingData),
+            });
+
+            const data = await res.json();
+            if (data.insertedId) {
+                setConfirmed(true); // ✅ show confirmed state
+                toast.success("Booking confirmed!");
+                setTimeout(() => setConfirmed(false), 3000);
+            }
+        } catch (err) {
+            toast.error("Booking failed. Try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -250,10 +293,10 @@ const FacilitiesDetailsPage = ({ facility }) => {
                             transition={{ duration: 0.4, delay: 0.15 }}
                             className="grid grid-cols-2 gap-3"
                         >
-                            <InfoChip icon={FiMapPin}     label="Location"  value={location} />
-                            <InfoChip icon={FiUsers}      label="Capacity"  value={`Up to ${capacity} players`} />
-                            <InfoChip icon={FiDollarSign} label="Price"     value={`$${pricePerHour}/hour`} />
-                            <InfoChip icon={FiClock}      label="Slots"     value={`${slots.length} available`} />
+                            <InfoChip icon={FiMapPin} label="Location" value={location} />
+                            <InfoChip icon={FiUsers} label="Capacity" value={`Up to ${capacity} players`} />
+                            <InfoChip icon={FiDollarSign} label="Price" value={`$${pricePerHour}/hour`} />
+                            <InfoChip icon={FiClock} label="Slots" value={`${slots.length} available`} />
                         </motion.div>
 
                         {/* about */}
