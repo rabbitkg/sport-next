@@ -20,10 +20,10 @@ import { Toast } from "@heroui/react";
 // ── Google Icon (inline SVG) ────────────────────────────────────────────────
 const GoogleIcon = () => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4"/>
-        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853"/>
-        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05"/>
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335"/>
+        <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4" />
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853" />
+        <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05" />
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335" />
     </svg>
 );
 
@@ -61,21 +61,22 @@ const SignUpPage = () => {
         const formData = new FormData(e.currentTarget);
         const user = Object.fromEntries(formData.entries());
 
-        const {data, error} = await authClient.signUp.email({
+        const { data, error } = await authClient.signUp.email({
             email: user.email,
             password: user.password,
             name: user.name,
             image: user.photoURL
         })
         // console.log({data, error})
-        if(data){
+        if (data) {
             redirect('/')
         }
 
-        if(error){
+        if (error) {
             alert("Error")
         }
 
+        
         // setIsLoading(true);
         // try {
         //     // Replace with your actual register endpoint
@@ -106,6 +107,12 @@ const SignUpPage = () => {
         // }
     };
 
+    const handleGoogleSignin = async () => {
+            await authClient.signIn.social({
+                provider: "google",
+            });
+        }
+        
     return (
         <section className="bg-[#071018] flex items-center justify-center px-4 pt-35 pb-10 relative overflow-hidden">
 
@@ -148,8 +155,8 @@ const SignUpPage = () => {
                         >
                             {/* SportNest gear-like mark */}
                             <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                                <circle cx="13" cy="13" r="4" fill="#84cc16"/>
-                                <path d="M13 2v3M13 21v3M2 13h3M21 13h3M4.93 4.93l2.12 2.12M18.95 18.95l2.12 2.12M4.93 21.07l2.12-2.12M18.95 7.05l2.12-2.12" stroke="#84cc16" strokeWidth="2" strokeLinecap="round"/>
+                                <circle cx="13" cy="13" r="4" fill="#84cc16" />
+                                <path d="M13 2v3M13 21v3M2 13h3M21 13h3M4.93 4.93l2.12 2.12M18.95 18.95l2.12 2.12M4.93 21.07l2.12-2.12M18.95 7.05l2.12-2.12" stroke="#84cc16" strokeWidth="2" strokeLinecap="round" />
                             </svg>
                         </motion.div>
 
@@ -265,6 +272,7 @@ const SignUpPage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.62 }}
                             type="button"
+                            onClick={handleGoogleSignin}
                             className="w-full h-12 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/8 text-gray-300 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
                         >
                             <GoogleIcon />

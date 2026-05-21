@@ -99,6 +99,12 @@ const LoginPage = () => {
         // }
     };
 
+    const handleGoogleSignin = async () => {
+                await authClient.signIn.social({
+                    provider: "google",
+                });
+            }
+
     return (
         <section className="bg-[#071018] flex items-center justify-center px-4 pt-37 pb-10 relative overflow-hidden">
 
@@ -250,6 +256,7 @@ const LoginPage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.56 }}
                             type="button"
+                            onClick={handleGoogleSignin}
                             className="w-full h-12 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/8 text-gray-300 hover:text-white font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
                         >
                             <GoogleIcon />
