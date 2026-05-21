@@ -51,7 +51,7 @@ const Navbar = () => {
                         <div>
                             <h1 className="text-3xl font-black italic tracking-wide">
                                 <span className="text-lime-400">Sport</span>
-                                <span className="text-blue-600">Nest</span>
+                                <span className="text-white">Nest</span>
                             </h1>
                             <p className="text-sm text-gray-300 uppercase">Sports Booking Platform</p>
                         </div>

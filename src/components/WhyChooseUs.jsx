@@ -8,6 +8,7 @@ import {
     Trophy,
     ArrowRight
 } from 'lucide-react'
+import Link from 'next/link'
 
 const features = [
     {
@@ -161,7 +162,7 @@ const WhyChooseUs = () => {
                             viewport={{ once: true }}
                             className="flex justify-center mt-16"
                         >
-
+                            <Link href={'/facility'}>
                             <button className="group bg-lime-400 hover:bg-lime-300 text-black font-bold px-10 py-5 rounded-full flex items-center gap-3 transition duration-300 hover:scale-105 cursor-pointer">
 
                                 Explore Facilities
@@ -169,8 +170,9 @@ const WhyChooseUs = () => {
                                 <ArrowRight
                                     size={22}
                                     className="group-hover:translate-x-1 transition duration-300"
-                                />
+                                    />
                             </button>
+                                    </Link>
                         </motion.div>
                     </div>
                 </div>

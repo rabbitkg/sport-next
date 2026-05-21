@@ -104,7 +104,7 @@ const Banner = () => {
                         transition={{ duration: 1.2 }}
                         className="flex flex-col sm:flex-row gap-5 mt-10"
                     >
-                        <Link href="/facilities">
+                        <Link href="/facility">
                             <button className="group bg-lime-400 hover:bg-lime-300 text-black font-bold px-8 py-4 rounded-full flex items-center gap-2 transition duration-300 hover:scale-105 cursor-pointer">
                                 Explore Facilities
 

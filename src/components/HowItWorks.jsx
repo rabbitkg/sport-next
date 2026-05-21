@@ -8,6 +8,7 @@ import {
     Trophy,
     Users
 } from 'lucide-react'
+import Link from 'next/link'
 
 const steps = [
     {
@@ -77,9 +78,14 @@ const HowItWorks = () => {
                         </p>
 
                         {/* Button */}
-                        <button className="mt-10 bg-lime-400 hover:bg-lime-300 text-black font-bold px-8 py-4 rounded-full transition duration-300 hover:scale-105 cursor-pointer">
+                        <Link
+                        href={'/facility'}
+                        >
+                        <button 
+                        className="mt-10 bg-lime-400 hover:bg-lime-300 text-black font-bold px-8 py-4 rounded-full transition duration-300 hover:scale-105 cursor-pointer">
                             Explore Facilities
                         </button>
+                            </Link>
 
                         {/* Big Image */}
                         <motion.div

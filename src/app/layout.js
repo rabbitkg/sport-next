@@ -24,14 +24,19 @@ export default function RootLayout({ children }) {
       className={`${josefin.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar/>
+        <Navbar />
         <main className="flex-1">
-          
+
           {children}
-        
+
         </main>
-        <Footer/>
-        <ToastContainer/>
+        <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          style={{ marginTop: "125px" }}
+          theme="dark"
+        />
       </body>
     </html>
   );
