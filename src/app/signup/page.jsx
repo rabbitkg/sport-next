@@ -40,9 +40,9 @@ const inputBase =
 // Password rules
 const validatePassword = (password) => {
     const errors = [];
-    if (password.length < 6)          errors.push("At least 6 characters");
-    if (!/[A-Z]/.test(password))      errors.push("One uppercase letter");
-    if (!/[a-z]/.test(password))      errors.push("One lowercase letter");
+    if (password.length < 6) errors.push("At least 6 characters");
+    if (!/[A-Z]/.test(password)) errors.push("One uppercase letter");
+    if (!/[a-z]/.test(password)) errors.push("One lowercase letter");
     return errors;
 };
 
@@ -79,11 +79,17 @@ const SignUpPage = () => {
             password: values.password,
             name: values.name,
             image: values.photoURL || undefined,
+            fetchOptions: {
+                query: {
+                    autoSignIn: "false"
+                }
+            }
         });
 
         setIsLoading(false);
 
         if (data) {
+            await authClient.signOut();
             toast.success("Account created! Please sign in.", {
                 theme: "dark",
                 position: "top-right",
@@ -110,8 +116,8 @@ const SignUpPage = () => {
     // Live password rule indicators
     const rules = [
         { label: "At least 6 characters", pass: password.length >= 6 },
-        { label: "One uppercase letter",  pass: /[A-Z]/.test(password) },
-        { label: "One lowercase letter",  pass: /[a-z]/.test(password) },
+        { label: "One uppercase letter", pass: /[A-Z]/.test(password) },
+        { label: "One lowercase letter", pass: /[a-z]/.test(password) },
     ];
 
     return (
