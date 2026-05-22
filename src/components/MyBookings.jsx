@@ -197,7 +197,7 @@ const MyBookings = () => {
     };
 
     return (
-        <section className="bg-[#071018] min-h-[calc(70vh-80px)] px-4 md:px-8 pt-30 pb-16">
+        <section className="bg-[#071018] min-h-screen px-4 md:px-8 pt-30 pb-16">
             <div className="max-w-5xl mx-auto">
 
                 {/* header */}
