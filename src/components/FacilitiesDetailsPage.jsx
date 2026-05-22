@@ -154,7 +154,7 @@ const BookingForm = ({ facility }) => {
                             type="number"
                             name="duration"
                             min={1}
-                            max={8}
+                            max={20}
                             value={duration}
                             onChange={(e) => setDuration(Math.max(1, Number(e.target.value)))}
                             className={inputClass}
@@ -220,7 +220,7 @@ const FacilitiesDetailsPage = ({ facility }) => {
     const badgeClass = sportColors[sportType] ?? "bg-lime-500 text-black";
 
     return (
-        <section className="bg-[#071018] px-4 md:px-8 pt-35 pb-10">
+        <section className="bg-[#071018] px-4 md:px-8 pt-31 pb-10">
             <div className="max-w-6xl mx-auto">
 
                 {/* back link */}

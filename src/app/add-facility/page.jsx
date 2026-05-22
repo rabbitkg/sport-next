@@ -68,7 +68,7 @@ const AddFacilityPage = () => {
     };
 
     return (
-        <section className="bg-[#071018] pt-25 px-4 md:px-8 pb-10">
+        <section className="bg-[#071018] pt-30 px-4 md:px-8 pb-10">
             <motion.div
                 initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}

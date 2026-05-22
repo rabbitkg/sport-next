@@ -6,7 +6,7 @@ A full-stack sports facility booking management system built with the MERN stack
 
 ## 🌐 Live URL
 
-> **[https://sportnest.vercel.app](https://sportnest.vercel.app)**
+> **[https://sport-nest-seven.vercel.app/](https://sport-nest-seven.vercel.app/)**
 
 ---
 
