@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
 
 const sports = [
     "Football",
@@ -36,9 +37,13 @@ const AddFacilityPage = () => {
         facility.slots = slots;
 
         try {
+            const { data: tokenData } = await authClient.token();
             const res = await fetch("http://localhost:5000/facility", {
                 method: "POST",
-                headers: { "content-type": "application/json" },
+                headers: { 
+                    "content-type": "application/json",
+                    authorization: `Bearer ${tokenData?.token}`
+                },
                 body: JSON.stringify(facility),
             });
 

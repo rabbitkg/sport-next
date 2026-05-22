@@ -19,6 +19,7 @@ import {
     FiClock,
     FiPlusCircle,
 } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
 const sportColors = {
     Tennis: "bg-yellow-400 text-black",
@@ -455,9 +456,13 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
     const handleEditSave = async (updatedData) => {
         setIsEditLoading(true);
         try {
+            const { data: tokenData } = await authClient.token();
             await fetch(`http://localhost:5000/facility/${editTarget._id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${tokenData?.token}`
+                },
                 body: JSON.stringify(updatedData),
             });
             setFacilities((prev) =>
@@ -481,8 +486,12 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
     const handleDeleteConfirm = async () => {
         setIsDeleteLoading(true);
         try {
+            const { data: tokenData } = await authClient.token();
             await fetch(`http://localhost:5000/facility/${deleteTarget._id}`, {
                 method: "DELETE",
+                headers: { 
+                    authorization: `Bearer ${tokenData?.token}`
+                },
             });
             setFacilities((prev) => prev.filter((f) => f._id !== deleteTarget._id));
             setDeleteTarget(null);
