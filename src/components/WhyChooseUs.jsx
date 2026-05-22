@@ -42,7 +42,7 @@ const features = [
 
 const WhyChooseUs = () => {
     return (
-        <section className="bg-[#D9D6CB] py-24 overflow-hidden shadow-2xl">
+        <section className="bg-[#d9d6cbb2] py-24 overflow-hidden shadow-2xl">
 
             <div className="max-w-7xl mx-auto px-5">
 
