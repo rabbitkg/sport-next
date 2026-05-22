@@ -1,4 +1,5 @@
 import Banner from "@/components/Banner";
+import Featured from "@/components/Featured";
 import HowItWorks from "@/components/HowItWorks";
 import MembershipSection from "@/components/Membership";
 import TopCitiesSection from "@/components/TopCitiesSection ";
@@ -9,6 +10,7 @@ export default function Home() {
   return (
     <div>
      <Banner/>
+     <Featured/>
 
       <WhyChooseUs/>
       <MembershipSection/>

@@ -457,7 +457,7 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
         setIsEditLoading(true);
         try {
             const { data: tokenData } = await authClient.token();
-            await fetch(`http://localhost:5000/facility/${editTarget._id}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/facility/${editTarget._id}`, {
                 method: "PATCH",
                 headers: { 
                     "Content-Type": "application/json",
@@ -487,7 +487,7 @@ const ManageFacilitiesPage = ({ facilities: initialFacilities = [] }) => {
         setIsDeleteLoading(true);
         try {
             const { data: tokenData } = await authClient.token();
-            await fetch(`http://localhost:5000/facility/${deleteTarget._id}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/facility/${deleteTarget._id}`, {
                 method: "DELETE",
                 headers: { 
                     authorization: `Bearer ${tokenData?.token}`

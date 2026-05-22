@@ -15,7 +15,12 @@ const josefin = Josefin_Sans({
 export const metadata = {
   title: "SportNest",
   description: "Sports Facility Booking Management System",
+  icons: {
+    icon: "/assets/logoSport.png",
+    apple: "/assets/logoSport.png",
+  },
 };
+
 
 export default function RootLayout({ children }) {
   return (
@@ -34,7 +39,7 @@ export default function RootLayout({ children }) {
         <ToastContainer
           position="top-right"
           autoClose={3000}
-          style={{ marginTop: "125px" }}
+          style={{ marginTop: "100px" }}
           theme="dark"
         />
       </body>

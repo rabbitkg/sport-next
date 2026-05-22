@@ -13,30 +13,7 @@ export function EditModal() {
         const formData = new FormData(e.currentTarget);
         const facility = Object.fromEntries(formData.entries());
         facility.slots = slots;
-
-        // try {
-        //     const res = await fetch("http://localhost:5000/facility", {
-        //         method: "POST",
-        //         headers: { "content-type": "application/json" },
-        //         body: JSON.stringify(facility),
-        //     });
-
-        //     const data = await res.json();
-
-        //     if (data.insertedId) {
-        //         toast.success("Facility added successfully!", {
-        //             position: "top-right",
-        //             autoClose: 2000,
-        //             theme: "dark",
-        //         });
-        //         setTimeout(() => router.push("/facility"), 2000);
-        //     } else {
-        //         toast.error("Something went wrong. Please try again.");
-        //     }
-        // } catch (err) {
-        //     console.error("Caught error:", err);
-        //     toast.error("Server error. Please try again.");
-        // }
+        
     };
 
     return (

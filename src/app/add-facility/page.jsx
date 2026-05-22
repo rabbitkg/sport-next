@@ -23,6 +23,8 @@ const AddFacilityPage = () => {
     const [slots, setSlots] = useState([]);
     const [slotInput, setSlotInput] = useState("");
     const router = useRouter();
+    const { data: session } = authClient.useSession();
+    const ownerEmail = session?.user?.email ?? "";
 
     const handleAddSlot = () => {
         if (!slotInput) return;
@@ -38,7 +40,7 @@ const AddFacilityPage = () => {
 
         try {
             const { data: tokenData } = await authClient.token();
-            const res = await fetch("http://localhost:5000/facility", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/facility`, {
                 method: "POST",
                 headers: { 
                     "content-type": "application/json",
@@ -66,7 +68,7 @@ const AddFacilityPage = () => {
     };
 
     return (
-        <section className="bg-[#071018] pt-35 px-4 md:px-8 pb-10">
+        <section className="bg-[#071018] pt-25 px-4 md:px-8 pb-10">
             <motion.div
                 initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -75,7 +77,7 @@ const AddFacilityPage = () => {
                 className="max-w-6xl mx-auto"
             >
                 {/* heading */}
-                <div className="mb-10">
+                <div className="mb-7">
                     <h2 className="text-4xl md:text-5xl font-black text-white">
                         Add New Facility
                     </h2>
@@ -94,7 +96,6 @@ const AddFacilityPage = () => {
                             {/* top grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                                {/* Facility Name */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Facility Name</label>
                                     <input
@@ -105,7 +106,6 @@ const AddFacilityPage = () => {
                                     />
                                 </div>
 
-                                {/* Sport Type */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Sport Type</label>
                                     <select
@@ -121,7 +121,6 @@ const AddFacilityPage = () => {
                                     </select>
                                 </div>
 
-                                {/* Image URL */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Image URL</label>
                                     <input
@@ -132,7 +131,6 @@ const AddFacilityPage = () => {
                                     />
                                 </div>
 
-                                {/* Location */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Location</label>
                                     <input
@@ -143,7 +141,6 @@ const AddFacilityPage = () => {
                                     />
                                 </div>
 
-                                {/* Price Per Hour */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Price Per Hour ($)</label>
                                     <input
@@ -154,7 +151,6 @@ const AddFacilityPage = () => {
                                     />
                                 </div>
 
-                                {/* Capacity */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-sm text-gray-300">Capacity</label>
                                     <input
@@ -164,9 +160,20 @@ const AddFacilityPage = () => {
                                         className={`w-full h-14 px-4 rounded-2xl ${inputClass}`}
                                     />
                                 </div>
+
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm text-gray-300">Owner Email</label>
+                                    <input
+                                        type="text"
+                                        value={ownerEmail}
+                                        disabled
+                                        placeholder="your email"
+                                        className={`w-full h-14 px-4 rounded-2xl ${inputClass} bg-[#0B1622]/80 cursor-not-allowed`}
+                                    />
+                                    <input type="hidden" name="ownerEmail" value={ownerEmail} />
+                                </div>
                             </div>
 
-                            {/* slots */}
                             <div>
                                 <label className="text-sm text-gray-300 mb-3 block">
                                     Available Time Slots
@@ -190,8 +197,7 @@ const AddFacilityPage = () => {
                                     </button>
                                 </div>
 
-                                {/* slot tags */}
-                                <div className="flex flex-wrap gap-3 mt-3">
+                                <div className="flex flex-wrap gap-3">
                                     {slots.map((slot, index) => (
                                         <motion.div
                                             key={index}
@@ -205,7 +211,6 @@ const AddFacilityPage = () => {
                                 </div>
                             </div>
 
-                            {/* description */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm text-gray-300">Description</label>
                                 <textarea
@@ -216,7 +221,6 @@ const AddFacilityPage = () => {
                                 ></textarea>
                             </div>
 
-                            {/* button */}
                             <div>
                                 <motion.button
                                     type="submit"

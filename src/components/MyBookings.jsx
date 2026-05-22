@@ -164,7 +164,7 @@ const MyBookings = () => {
         const fetchBookings = async () => {
             try {
                 const { data: tokenData } = await authClient.token();
-                const res = await fetch(`http://localhost:5000/booking?userId=${user.id}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/booking?userId=${user.id}`, {
                     headers: { authorization: `Bearer ${tokenData?.token}` },
                 });
                 const data = await res.json();
@@ -182,7 +182,7 @@ const MyBookings = () => {
     const handleCancel = async (bookingId) => {
         try {
             const { data: tokenData } = await authClient.token();
-            const res = await fetch(`http://localhost:5000/booking/${bookingId}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/booking/${bookingId}`, {
                 method: "DELETE",
                 headers: { authorization: `Bearer ${tokenData?.token}` },
             });
